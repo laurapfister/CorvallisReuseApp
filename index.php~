@@ -68,7 +68,7 @@
 
 		$request = $app->request();
 		$body = $request->getBody();
-		echo json_decode($body);
+		echo $body;
 
 	});
 	/*
