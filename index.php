@@ -1,0 +1,68 @@
+<?php
+	
+	require '../vendor/autoload.php';
+	//\Slim\Slim::registerAutoloader();
+
+	
+	
+	$app = new \Slim\Slim(array('debug' => true));
+	$app->get('/', function() {
+		echo "Hello world";
+		
+	});
+	$app->get('/repair', function() {
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$result = $mysqli->query('SELECT repairName, repairAddress, repairCity, repairState, repairZip, repairPhone FROM repair_businesses');
+		
+		while($row = $result->fetch_array(MYSQL_ASSOC)){
+			$myArray[] = $row;
+		}
+		echo json_encode($myArray);
+		$result->close();
+		$mysqli->close();
+	});
+	
+	
+	$app->get('/repair/:name', function($name) {
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$stmt = $mysqli->prepare("SELECT repairName, repairAddress, repairCity, repairState, repairZip, repairPhone FROM repair_businesses WHERE repairName = ?");
+		$stmt->bind_param("s", $name);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		while($row = $result->fetch_array(MYSQL_ASSOC)){
+			$myArray[] = $row;
+		}
+		echo json_encode($myArray);
+		$result->close();
+		$mysqli->close();
+ 	});
+	
+	
+	$app->get('/repairItem', function() {
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$result = $mysqli->query('SELECT itemName FROM repair_items');
+		
+		while($row = $result->fetch_array(MYSQL_ASSOC)){
+			$myArray[] = $row;
+		}
+		echo json_encode($myArray);
+		$result->close();
+		$mysqli->close();
+	});
+	
+	$app->get('/repairItem/:item', function($item) {
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$stmt = $mysqli->prepare("SELECT repairName FROM repair_businesses AS rb INNER JOIN rep_bus_items AS rbi ON rb.repairId = rbi.bId INNER JOIN repair_items AS ri ON ri.itemId = rbi.iId WHERE ri.ItemName = ?");
+		$stmt->bind_param("s", $item);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		while($row = $result->fetch_array(MYSQL_ASSOC)){
+			$myArray[] = $row;
+		}
+		echo json_encode($myArray);
+		$result->close();
+		$mysqli->close();
+	}); 
+	
+	$app->run();
+?>
