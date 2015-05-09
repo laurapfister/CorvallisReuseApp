@@ -331,7 +331,7 @@
 
 	$app->get('/reuseItems', function(){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT ri.itemName, rc.categoryName FROM reuse_items AS ri INNER JOIN reuse_categories as rc ON rc.categoryId = ri.categoryId');
+		$result = $mysqli->query('SELECT ri.itemName, rc.categoryName FROM reuse_items AS ri LEFT JOIN reuse_categories as rc ON rc.categoryId = ri.categoryId');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -441,6 +441,122 @@
 		
 	});
 
+	$app->post('/reuseItems', function() use ($app){
+
+		$request = $app->request();
+		$body = $request->getBody();
+		$params = json_decode($body);
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+
+		if(isset($params->itemName)){	
+			$item = $mysqli->real_escape_string((string)$params->itemName);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->category)){
+			$category = $mysqli->real_escape_string((string)$params->category);
+		}
+		$stmt = $mysqli->prepare("INSERT INTO reuse_items(itemName) VALUES(?)");
+		$stmt->bind_param("s", $item);
+		$stmt->execute();
+	
+		if(isset($category)){
+			$stmt = $mysqli->prepare("UPDATE reuse_items SET categoryId = (SELECT categoryId FROM reuse_categories WHERE categoryName = ?) WHERE itemName = ?");
+			$stmt->bind_param("ss", $category, $item);
+			$stmt->execute();		
+	
+		}
+		$mysqli->close();
+		
+	});
+
+	$app->post('/reuseCategory', function() use($app){
+		
+		$request = $app->request();
+		$body = $request->getBody();
+		$params = json_decode($body);
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+
+		if(isset($params->category)){	
+			$category = $mysqli->real_escape_string((string)$params->category);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		$stmt = $mysqli->prepare("INSERT INTO reuse_categories(categoryName) VALUES(?)");
+		$stmt->bind_param("s", $category);
+		$stmt->execute();
+
+		$mysqli->close();
+
+		
+	});
+
+	$app->put('/reuse/:category/:business', function($category, $business){
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+
+		$category = $mysqli->real_escape_string($category);
+		$business = (int)$mysqli->real_escape_string($business);
+		
+		$stmt = $mysqli->prepare("INSERT INTO reuse_bus_categories (cid, bid) VALUES((SELECT categoryId FROM reuse_categories WHERE categoryName = ?), ?)");
+		$stmt->bind_param("si", $category, $business);
+		$stmt->execute();
+		$mysqli->close();
+	
+
+	});
+
+	$app->delete('/reuse/:id', function($id){
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$id = (int)$mysqli->real_escape_string($id);
+
+		$stmt = $mysqli->prepare("DELETE FROM reuse_businesses WHERE reuseId = ?");
+
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$mysqli->close();
+		
+	
+	});
+	
+	$app->delete('/reuseItems/:item', function($item){
+
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$item = $mysqli->real_escape_string($item);
+
+		$stmt = $mysqli->prepare("DELETE FROM reuse_items WHERE itemName = ?");
+		$stmt->bind_param("s", $item);
+		$stmt->execute();
+		$mysqli->close();
+
+	});
+
+	$app->delete('/reuseCategory/:category', function($category){
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$category = $mysqli->real_escape_string($category);
+
+		$stmt = $mysqli->prepare("DELETE FROM reuse_categories WHERE categoryName = ?");
+		$stmt->bind_param("s", $category);
+		$stmt->execute();
+		$mysqli->close();
+
+
+	});
+
+	$app->delete('/reuse/:category/:business', function($category, $business){
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$category = $mysqli->real_escape_string($category);
+		$business = (int)$mysqli->real_escape_string($business);
+		
+		$stmt = $mysqli->prepare("DELETE FROM reuse_bus_categories WHERE (bid = ? AND cid = (SELECT categoryId from reuse_categories WHERE categoryName = ?))");
+
+		$stmt->bind_param("is", $business, $category);
+		$stmt->execute();
+		$mysqli->close(); 
+	});
 	
 
 	
