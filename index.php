@@ -17,7 +17,9 @@
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 	});
@@ -26,13 +28,18 @@
 	$app->get('/repair/:name', function($name) {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("SELECT repairName, repairAddress, repairCity, repairState, repairZip, repairPhone FROM repair_businesses WHERE repairName = ?");
+
+		$name = $mysqli->real_escape_string($name);
 		$stmt->bind_param("s", $name);
 		$stmt->execute();
 		$result = $stmt->get_result();
+		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
  	});
@@ -45,7 +52,9 @@
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 	});
@@ -55,25 +64,34 @@
 		$request = $app->request();
 		$body = $request->getBody();
 		$params = json_decode($body);
-		
-		$item = (string)$params->itemName;
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		
+		if(isset($params->itemName)){
+			$item = $mysqli->real_escape_string((string)$params->itemName);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		
 		$stmt = $mysqli->prepare("INSERT INTO repair_items(itemName) VALUES (?)");
 		$stmt->bind_param("s", $item);
 		$stmt->execute();
-		echo "Good";
 	});
 	
 	$app->get('/repairItem/:item', function($item) {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("SELECT repairName FROM repair_businesses AS rb INNER JOIN rep_bus_items AS rbi ON rb.repairId = rbi.bId INNER JOIN repair_items AS ri ON ri.itemId = rbi.iId WHERE ri.ItemName = ?");
+		$item = $mysqli->real_escape_string($item);
 		$stmt->bind_param("s", $item);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 	});
@@ -97,6 +115,65 @@
 		$long = (double)$params->long;
 		
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+
+		if(isset($params->businessName)){
+			$name = $mysqli->real_escape_string((string)$params->businessName);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->Address)){
+			$address = $mysqli->real_escape_string((string)$params->Address);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->city)){
+			$city = $mysqli->real_escape_string((string)$params->city);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->state)){
+			$state = $mysqli->real_escape_string((string)$params->state);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->zip)){
+			$zip = $mysqli->real_escape_string((string)$params->zip);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->phone)){
+			$phone = $mysqli->real_escape_string((string)$params->phone);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->website)){
+			$website = $mysqli->real_escape_string((string)$params->website);
+		}
+		if(isset($params->hours)){
+			$hours = $mysqli->real_escape_string((string)$params->hours);
+		}
+		if(isset($params->addInfo)){
+			$addInfo = $mysqli->real_escape_string((string)$params->addInfo);
+		}
+		if(isset($params->lat)){
+			$lat = (double)$mysqli->real_escape_string((string)$params->lat);
+		}
+		if(isset($params->long)){
+			$long = (double)$mysqli->real_escape_string((string)$params->long);
+		}
+
 		$stmt = $mysqli->prepare("INSERT INTO repair_businesses(repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairWeb, repairHours, repairAddInfo, repairLongitude, repairLatitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		$stmt->bind_param("sssssssssdd", $name, $address, $city, $state, $zip, $phone, $website, $hours, $addInfo, $lat, $long);
 		$stmt->execute();
@@ -104,16 +181,19 @@
 		echo "Good";
 	});
 	
-	$app->delete('/repair/:name', function($name) use ($app){
+	$app->delete('/repair/:name', function($name){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+
+		$name = $mysqli->real_escape_string($name);
 		$stmt = $mysqli->prepare("DELETE FROM repair_businesses WHERE repairName = ?");
 		$stmt->bind_param("s", $name);
 		$stmt->execute();
 		$mysqli->close();
 	});
 	
-	$app->delete('/repairItem/:item', function($item) use($app){
+	$app->delete('/repairItem/:item', function($item){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$item = $mysqli->real_escape_string($item);
 		$stmt = $mysqli->prepare("DELETE FROM repair_items WHERE ItemName = ?");
 		$stmt->bind_param("s", $item);
 		$stmt->execute();
@@ -123,6 +203,9 @@
 	$app->delete('/repair/:name/:item', function($name, $item){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("DELETE FROM rep_bus_items WHERE (bId = (SELECT repairId FROM repair_businesses WHERE repairName = ?) AND iId = (SELECT itemId FROM repair_items WHERE ItemName = ?))");
+
+		$name = $mysqli->real_escape_string($name);
+		$item = $mysqli->real_escape_string($item);
 		$stmt->bind_param("ss", $name, $item);
 		$stmt->execute();
 		$mysqli->close();
@@ -131,6 +214,9 @@
 	$app->put('/repair/:name/:item', function($name, $item){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("INSERT INTO rep_bus_items(bId, iId) VALUES((SELECT repairId FROM repair_businesses WHERE repairName = ?), (SELECT itemId FROM repair_items WHERE ItemName = ?))");
+
+		$name = $mysqli->real_escape_string($name);
+		$item = $mysqli->real_escape_string($item);
 		$stmt->bind_param("ss", $name, $item);
 		$stmt->execute();
 		$mysqli->close();
@@ -141,22 +227,70 @@
 		$request = $app->request();
 		$body = $request->getBody();
 		$params = json_decode($body);
-		
-		$name = (string)$params->businessName;
-		$address = (string)$params->Address;
-		$city = (string)$params->city;
-		$state = (string)$params->state;
-		$zip = (string)$params->zip;
-		$phone = (string)$params->phone;
-		$website = (string)$params->website;
-		$hours = (string)$params->hours;
-		$addInfo = (string)$params->addInfo;
-		$lat = (double)$params->lat;
-		$long = (double)$params->long;
-		
+
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$stmt = $mysqli->prepare("UPDATE repair_businesses SET repairAddress=?, repairCity=?, repairState=?, repairZip=?, repairPhone=?, repairWeb=?, repairHours=?, repairAddInfo=?, repairLongitude=?, repairLatitude=?");
-		$stmt->bind_param("ssssssssdds", $name, $address, $city, $state, $zip, $phone, $website, $hours, $addInfo, $lat, $long, $name);
+		
+		if(isset($params->businessName)){
+			$new_name = $mysqli->real_escape_string((string)$params->businessName);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->Address)){
+			$address = $mysqli->real_escape_string((string)$params->Address);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->city)){
+			$city = $mysqli->real_escape_string((string)$params->city);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->state)){
+			$state = $mysqli->real_escape_string((string)$params->state);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->zip)){
+			$zip = $mysqli->real_escape_string((string)$params->zip);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->phone)){
+			$phone = $mysqli->real_escape_string((string)$params->phone);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->website)){
+			$website = $mysqli->real_escape_string((string)$params->website);
+		}
+		if(isset($params->hours)){
+			$hours = $mysqli->real_escape_string((string)$params->hours);
+		}
+		if(isset($params->addInfo)){
+			$addInfo = $mysqli->real_escape_string((string)$params->addInfo);
+		}
+		if(isset($params->lat)){
+			$lat = $mysqli->real_escape_string((string)$params->lat);
+		}
+		if(isset($params->long)){
+			$long = $mysqli->real_escape_string((string)$params->long);
+		}
+		$name = $mysqli->real_escape_string($name);
+		
+		$stmt = $mysqli->prepare("UPDATE repair_businesses SET repairName = ? repairAddress=?, repairCity=?, repairState=?, repairZip=?, repairPhone=?, repairWeb=?, repairHours=?, repairAddInfo=?, repairLongitude=?, repairLatitude=? WHERE repairName = ?");
+		$stmt->bind_param("ssssssssdds", $new_name, $address, $city, $state, $zip, $phone, $website, $hours, $addInfo, $lat, $long, $name);
 		$stmt->execute();
 		$mysqli->close();
 
@@ -169,7 +303,9 @@
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 
@@ -178,13 +314,17 @@
 	$app->get('/reuse/:id', function($id){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("SELECT reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reuseWeb FROM reuse_businesses WHERE reuseId = ?");
+
+		$id = $mysqli->real_escape_string($id);
 		$stmt->bind_param("i", $id);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 	});
@@ -196,7 +336,9 @@
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 	});
@@ -208,7 +350,9 @@
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 	});
@@ -216,13 +360,17 @@
 	$app->get('/reuseItems/:category', function($category){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("SELECT ri.itemName FROM reuse_items AS ri INNER JOIN reuse_categories as rc ON rc.categoryId = ri.categoryId WHERE rc.categoryName = ?");
+
+		$category = $mysqli->real_escape_string($category);
 		$stmt->bind_param("s", $category);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 
@@ -237,7 +385,9 @@
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
 		}
-		echo json_encode($myArray);
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
 		$result->close();
 		$mysqli->close();
 	});
@@ -247,17 +397,42 @@
 		$request = $app->request();
 		$body = $request->getBody();
 		$params = json_decode($body);
+			
 
-		$name = (string)$params->reuseName;
-		$address = (string)$params->reuseAddress;
-		$state = (string)$params->state;
-		$city = (string)$params->city;
-		$zip = (string)$params->zip;
-		$phone = (string)$params->phone;
-		$web = (string)$params->web;
-		$hours = (string)$params->hours;
-		$long = (double)$params->longitude;
-		$lat = (double)$params->latitude;
+		if(isset($params->reuseName)){
+			$name = $mysqli->real_escape_string((string)$params->reuseName);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->reuseAddress)){
+			$address = $mysqli->real_escape_string((string)$params->reuseAddress);
+		}
+		if(isset($params->state)){
+			$state = $mysqli->real_escape_string((string)$params->state);
+		}
+		if(isset($params->city)){
+			$city = $mysqli->real_escape_string((string)$params->city);
+		}
+		if(isset($params->zip)){
+			$zip = $mysqli->real_escape_string((string)$params->zip);
+		}
+		if(isset($params->phone)){		
+			$phone = $mysqli->real_escape_string((string)$params->phone);
+		}
+		if(isset($params->web)){
+			$web = $mysqli->real_escape_string((string)$params->web);
+		}
+		if(isset($params->hours)){
+			$hours = $mysqli->real_escape_string((string)$params->hours);
+		}
+		if(isset($params->longitude)){
+			$long = (double)$mysqli->real_escape_string($params->longitude);
+		}
+		if(isset($params->latitude)){
+			$lat = (double)$mysqli->real_escape_string($params->latitude);
+		}
 
 		$stmt = $mysqli->prepare("INSERT INTO reuse_businesses(reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reusePhone, reuseWeb,reuseHours, reuseLongitude, reuseLatitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		$stmt->bind_param("ssssssssdd", $name, $address, $city, $state, $zip, $phone, $web, $hours, $long, $lat);
