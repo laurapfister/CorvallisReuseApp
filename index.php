@@ -12,7 +12,7 @@
 	});
 	$app->get('/repair', function() {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT repairName, repairAddress, repairCity, repairState, repairZip, repairPhone FROM repair_businesses');
+		$result = $mysqli->query('SELECT repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairHours, repairWeb, repairLongitude, repairLatitude FROM repair_businesses');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -20,14 +20,14 @@
 		if(isset($myArray)){
 			echo json_encode($myArray);
 		}
+		
 		$result->close();
 		$mysqli->close();
 	});
 	
-	
 	$app->get('/repair/:name', function($name) {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$stmt = $mysqli->prepare("SELECT repairName, repairAddress, repairCity, repairState, repairZip, repairPhone FROM repair_businesses WHERE repairName = ?");
+		$stmt = $mysqli->prepare("SELECT repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairHours, repairWeb, repairAddInfo, repairLongitude, repairLatitude FROM repair_businesses WHERE repairName = ?");
 
 		$name = $mysqli->real_escape_string($name);
 		$stmt->bind_param("s", $name);
@@ -90,6 +90,10 @@
 			$myArray[] = $row;
 		}
 		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
+		else{
+			$myArray[] = NULL;
 			echo json_encode($myArray);
 		}
 		$result->close();
@@ -298,7 +302,7 @@
 
 	$app->get('/reuse', function(){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reuseWeb FROM reuse_businesses');
+		$result = $mysqli->query('SELECT reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reuseWeb, reuseHours, reuseLongitude, reuseLatitude FROM reuse_businesses');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -313,7 +317,7 @@
 
 	$app->get('/reuse/:id', function($id){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$stmt = $mysqli->prepare("SELECT reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reuseWeb FROM reuse_businesses WHERE reuseId = ?");
+		$stmt = $mysqli->prepare("SELECT reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reuseWeb, reuseHours, reuseLongitude, reuseLatitude FROM reuse_businesses WHERE reuseId = ?");
 
 		$id = $mysqli->real_escape_string($id);
 		$stmt->bind_param("i", $id);
