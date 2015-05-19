@@ -3,19 +3,44 @@
   <head>
     <title>Repair Items Directory Edit</title>
     <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="rep_items.css">
   </head>
   <body>
-    <!--- Header for the website here. Include Link to home page and to other
-	  pages--->
+    <div id="logo"></div>
+    <div class="menu-wrap">
+      <nav class="menu">
+	<ul class="menu-list">
+	  <li><a href="CorvallisReuseRepair.html">Home</a></li>
+	  <li>
+	    <a href="#">Reuse<span class="drop-down"></span></a>
+	    <ul class="sub-menu">
+	      <li><a href="#">Businesses</a></li>
+	      <li><a href="#">Categories</a></li>
+	      <li><a href="#">Items</a></li>
+	    </ul>
+	  </li>
+	  <li>
+	    <a href="#">Repair<span class="drop-down"></span></a>
+	    <ul class="sub-menu">
+	      <li><a href="#">Businesses</a></li>
+	      <li><a href="#">Items</a></li>
+	    </ul>
+	  </li>
+	</ul>
+      </nav>
+    </div>
 
     <!--- New Item input here --->
-    <section>
-      <h3>Create New Item</h3>
-      <form>
-	<label>Item Name<input id="iname" type="text"></label>
-	<input type="button" value = "Add Item">
-      </form>
-    </section>
+    <div id="Items">
+    <div>
+      <section>
+	<h3>Create New Item</h3>
+	<form>
+	  <label>Item Name<input id="iname" type="text"></label>
+	  <input type="button" value = "Add Item">
+	</form>
+      </section>
+    </div>
     <!--- Edit Existing item here --->
     <section>
       <h3> Edit Existing Item </h3>
@@ -30,7 +55,7 @@
       <h3> Items </h3>
 
     </section>
-
+    </div>
 
 
   </body>
