@@ -1,0 +1,54 @@
+var base_url = "http://web.engr.oregonstate.edu/~pfisterl/cs419/api/index.php";
+
+$(document).ready(function(){
+    
+    function load_businesses(){
+	$.ajax({type:"GET",
+		url: base_url+"/repair",
+		dataType: 'json',
+		success: function(data){
+		    var busis = "<select name='select_item' id='select_item'><option>---------------</option>";
+		    var blist = "";
+		    for(var i = 0; i < data.length; i++){
+			busis += "<option value=";
+			busis += data[i].repairId + ">";
+			busis += data[i].repairName;
+			busis += "</option>";
+			blist += "<div class='busi-wrapper'>";
+			blist += "<span class='lname'>" + data[i].repairName + "</span>";
+			blist += "<span class='laddress'>" + data[i].repairAddress + "</span>";
+			blist += "<span class='lcity'>" + data[i].repairCity + "</span>";
+			blist += "<span class ='lstate'>" + data[i].repairState + "</span>";
+			blist += "<span class ='lzip'>" + data[i].repairZip + "</span>";
+			blist += "<span class ='lphone'>" + data[i].repairPhone + "</span>";
+			blist += "<span class ='lweb'>" + data[i].repairWeb + "</span></div>";
+		    }
+		    busis += "</select>";
+		    document.getElementById("cur_busis").innerHTML = busis;
+		    document.getElementById("busi_list").innerHTML = blist;
+		    
+		    $("#select_item").bind('change', function(){
+			var selected = $("option:selected", this);
+			$.ajax({type:"GET",
+				dataType: 'json',
+				url: base_url+"/repair/"+selected.val(),
+				success: function(data){
+				    $("#hidden_busi").val(data[0].repairId);
+				    $("#ebname").val(data[0].repairName);
+				    $("#eaddress").val(data[0].repairAddress);
+				    $("#ecity").val(data[0].repairCity);
+				    $("#estate").val(data[0].repairState);
+				    $("#ezip").val(data[0].repairZip);
+				    $("#ephone").val(data[0].repairPhone);
+				    $("#ewebsite").val(data[0].repairWeb);
+				    $("#ehours").val(data[0].repairHours);
+				    $("#eaddInfo").val(data[0].repairAddInfo);
+				}
+			       });
+
+		    });
+		}
+	       });
+    }
+    load_businesses();
+});

@@ -1,5 +1,5 @@
 <?php
-	
+	ini_set('display_errors', 1);
 	require '../vendor/autoload.php';
 	require_once('../php-opencage-geocode/src/OpenCage.Geocoder.php');
 	//\Slim\Slim::registerAutoloader();
@@ -46,6 +46,25 @@
 		$mysqli->close();
  	});
 	
+	$app->get('/repair_busi_items/:id', function($id){
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$stmt = $mysqli->prepare("SELECT ri.itemName FROM repair_items AS ri INNER JOIN rep_bus_items AS rbi ON rbi.iId = ri.itemId WHERE rbi.bId = ?");
+		
+		$id = (int)$mysqli->real_escape_string($id);
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		
+		while($row = $result->fetch_array(MYSQL_ASSOC)){
+			$myArray[] = $row;
+		}	
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
+		$result->close();
+		$mysqli->close();
+	});	
+
 	
 	$app->get('/repairItem', function() {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
@@ -192,7 +211,10 @@
 		$stmt = $mysqli->prepare("INSERT INTO repair_businesses(repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairWeb, repairHours, repairAddInfo, repairLongitude, repairLatitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		$stmt->bind_param("sssssssssdd", $name, $address, $city, $state, $zip, $phone, $website, $hours, $addInfo, $lat, $long);
 		$stmt->execute();
+		echo $stmt->insert_id;
 		$mysqli->close();
+
+		
 	});
 	
 	$app->delete('/repair/:id', function($id){
@@ -243,6 +265,13 @@
 		$params = json_decode($body);
 
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		
+
+		$new_name = $request->params('businessName');
+		$address = $request->params('Address');
+		$state = $request->params('state');
+		$zip = $request->params('zip');
+		$phone = $request->params('phone');
 		
 		if(isset($params->businessName)){
 			$new_name = $mysqli->real_escape_string((string)$params->businessName);
@@ -295,6 +324,7 @@
 		if(isset($params->addInfo)){
 			$addInfo = $mysqli->real_escape_string((string)$params->addInfo);
 		}
+		/*
 		if(isset($address) && isset($city) && isset($state)){
 			$key = "39ee84f3ae0ca490055ca19becda2846";
 			$geocoder = new OpenCage\Geocoder($key);
@@ -302,13 +332,15 @@
 			$geo_res = $geocoder->geocode($query);
 			$lat = $geo_res["results"][0]["geometry"]["lat"];
 			$long = $geo_res["results"][0]["geometry"]["lng"];
-		};
+		};*/
 		$id = (int)$mysqli->real_escape_string($id);
 		
-		$stmt = $mysqli->prepare("UPDATE repair_businesses SET repairName = ? repairAddress=?, repairCity=?, repairState=?, repairZip=?, repairPhone=?, repairWeb=?, repairHours=?, repairAddInfo=?, repairLongitude=?, repairLatitude=? WHERE repairId = ?");
-		$stmt->bind_param("ssssssssddi", $new_name, $address, $city, $state, $zip, $phone, $website, $hours, $addInfo, $lat, $long, $id);
+		$stmt = $mysqli->prepare("UPDATE repair_businesses SET repairName = ?, repairAddress= ?, repairCity= ?, repairState= ?, repairZip= ?, repairPhone= ?, repairWeb= ?, repairHours= ?, repairAddInfo= ?, repairLongitude= ?, repairLatitude= ? WHERE repairId = ?");
+		
+		$stmt->bind_param("sssssssssddi", $new_name, $address, $city, $state, $zip, $phone, $website, $hours, $addInfo, $long, $lat, $id);
 		$stmt->execute();
 		$mysqli->close();
+		
 
 	});
 

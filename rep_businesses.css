@@ -186,8 +186,55 @@ input{
    display:block;
 }
 
+.body-wrap{
+    max-width:1000px;
+    width:100%;
+    min-width:400px;
+    display:block;
+}
 
+.input-wrap{
+    padding-top: 20px;
+    width:50%;
+    max-width:500px;
+    min-width: 200px;
+    display:inline-block;
+    position: relative;
+    float: left;
+    height: 500px;
+}
 
+.busi-wrapper{
+    width: 240px;
+    display:inline-table;
+    position:relative;
+    float: left;
+    padding-top: 20px;
+    min-height: 150px;
+}
 
+.lname, .laddress, .lphone{
+    display:block;
+}
 
+.lcity, .lstate, .lzip{
+    display: inline-block;
+    padding-right: 2px;
+}
 
+.lweb{
+    display: block;
+    font-size: 14px;
+    max-width: 230px;
+    word-break: break-all;
+}
+
+#del_busi{
+    display: inline-block;
+}
+
+.add-item{
+    display: block;
+    position: relative;
+    margin: 5px;
+}

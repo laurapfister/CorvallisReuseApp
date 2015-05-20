@@ -49,7 +49,7 @@ $(document).ready(function(){
 		url: base_url+"/repairItem/"+cur_item+"/"+new_item,
 		dataType: 'json'
 		}).always(function(){
-		   load_items()
+		   load_items();
 		   });
 		    
     });
@@ -62,7 +62,7 @@ $(document).ready(function(){
 		contentType: 'application/json',
 		data:JSON.stringify({'itemName': new_item})
 	       }).always(function(){
-		   load_items()
+		   load_items();
 		   document.getElementById("iname").value = "";
 		   });
     });
