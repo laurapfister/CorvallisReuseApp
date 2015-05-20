@@ -7,6 +7,7 @@
 	
 	
 	$app = new \Slim\Slim(array('debug' => true));
+	$app->response->headers->set('Content-Type', 'application/json');
 	$app->get('/', function() {
 		echo "Hello world";
 		
@@ -67,13 +68,16 @@
 		$params = json_decode($body);
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		
-		if(isset($params->itemName)){
+		
+		$item = $request->params('itemName');
+		/*if(isset($params->itemName)){
 			$item = $mysqli->real_escape_string((string)$params->itemName);
 		}
 		else{
+			echo "FALSE";
 			$app->response->setStatus(400);
 			exit(1);
-		}
+		}*/
 		
 		$stmt = $mysqli->prepare("INSERT INTO repair_items(itemName) VALUES (?)");
 		$stmt->bind_param("s", $item);
@@ -100,6 +104,20 @@
 		$result->close();
 		$mysqli->close();
 	});
+
+	$app->patch('/repairItem/:item/:new_item', function($item, $new_item){
+
+		
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$stmt = $mysqli->prepare("UPDATE repair_items SET itemName = ? WHERE itemName = ?");
+		if(isset($params->itemName)){
+			$new_item = $mysqli->real_escape_string((string)$params->itemName);
+		}
+		$stmt->bind_param("ss", $new_item, $item);
+		$stmt->execute();
+		echo $item, $new_item;
+	});
+		
 	
 	$app->post('/repair', function() use ($app){
 		

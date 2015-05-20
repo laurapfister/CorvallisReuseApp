@@ -4,30 +4,33 @@
     <title>Repair Items Directory Edit</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="rep_items.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   </head>
   <body>
-    <div id="logo"></div>
-    <div class="menu-wrap">
-      <nav class="menu">
-	<ul class="menu-list">
-	  <li><a href="CorvallisReuseRepair.html">Home</a></li>
-	  <li>
-	    <a href="#">Reuse<span class="drop-down"></span></a>
-	    <ul class="sub-menu">
-	      <li><a href="#">Businesses</a></li>
-	      <li><a href="#">Categories</a></li>
-	      <li><a href="#">Items</a></li>
-	    </ul>
-	  </li>
-	  <li>
-	    <a href="#">Repair<span class="drop-down"></span></a>
-	    <ul class="sub-menu">
-	      <li><a href="#">Businesses</a></li>
-	      <li><a href="#">Items</a></li>
-	    </ul>
-	  </li>
-	</ul>
-      </nav>
+    <div id="header">
+      <div id="logo"></div>
+      <div class="menu-wrap">
+	<nav class="menu">
+	  <ul class="menu-list">
+	    <li><a href="CorvallisReuseRepair.html">Home</a></li>
+	    <li>
+	      <a href="#">Reuse<span class="drop-down"></span></a>
+	      <ul class="sub-menu">
+		<li><a href="./reuse_businesses.html">Businesses</a></li>
+		<li><a href="./reuse_categories.html">Categories</a></li>
+		<li><a href="./reuse_items.html">Items</a></li>
+	      </ul>
+	    </li>
+	    <li>
+	      <a href="#">Repair<span class="drop-down"></span></a>
+	      <ul class="sub-menu">
+		<li><a href="./rep_businesses.html">Businesses</a></li>
+		<li><a href="./rep_items.html">Items</a></li>
+	      </ul>
+	    </li>
+	  </ul>
+	</nav>
+      </div>
     </div>
 
     <!--- New Item input here --->
@@ -37,26 +40,30 @@
 	<h3>Create New Item</h3>
 	<form>
 	  <label>Item Name<input id="iname" type="text"></label>
-	  <input type="button" value = "Add Item">
+	  <input class="button" type="button" id="add_item" value = "Add Item">
 	</form>
       </section>
     </div>
     <!--- Edit Existing item here --->
     <section>
-      <h3> Edit Existing Item </h3>
+      <h3> Edit or Delete Existing Item </h3>
        <form>
-	 <label>Item Name<input type="text"></label>
-	 <input type="button" value = "Save Edit">
+	 <label> Select Existing Item to Edit<div id="cur_items"></div></label>
+	 <br>
+	 <input type="hidden" id="hidden_select">
+	 <label>Item Name<input id="item_name_edit" type="text"></label>
+	 <input id="edit_item" class="button" type="button" value = "Save Edit">
+	 <input id="delete_item" class="button" type="button" value = "Delete Item">
       </form>
     </section>
 
     <!--- List of  Items here --->
     <section>
       <h3> Items </h3>
-
+      <div id="item_list"></div>
     </section>
     </div>
 
-
+    <script src="rep_items.js"></script>
   </body>
 </html>
