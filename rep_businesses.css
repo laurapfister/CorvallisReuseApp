@@ -145,13 +145,49 @@ input{
     padding-left:5px;
     padding-right:5px;
     margin:5px;
+    display:block;
 }
+
 #heading{
     font-size:28px;
     display:inline-block;
     padding-top:30px;
-    padding-left:110px;
+    padding-left:45px;
     color:#D67814;
     text-shadow:0px 0.1px 0px rgba(255,255,255, .3), 0px -0.1px 0px rgba(0,0,0,.7);
     position:relative;
 }
+
+.full_line{
+   display:block;
+   width: 316px;
+}
+
+.partial_line{
+    display:inline-block;
+}
+
+#city, #phone, #ecity, #ephone{
+    width:100px;
+}
+#state, #estate{
+    width:20px;
+}
+#zip, #ezip{
+    width:50px;
+}
+
+#phone, #ephone{
+    display:block;
+}
+
+#hours, #addInfo, #ehours, #eaddInfo{
+   width: 335px;
+   display:block;
+}
+
+
+
+
+
+
