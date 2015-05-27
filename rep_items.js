@@ -13,7 +13,7 @@ $(document).ready(function(){
 		    var list = "";
 		    for(var i = 0; i < data.length; i++){
 			console.log(data[i].itemName);
-			items += "<option>";
+			items += "<option value = " + data[i].itemId + ">";
 			items += data[i].itemName;
 			items += "</option>";
 			list += "<div class='item'>";
@@ -26,12 +26,12 @@ $(document).ready(function(){
 		    
 		    var selected = $("option:selected", this);
 			document.getElementById("item_name_edit").value = selected.text();
-			document.getElementById("hidden_select").value = selected.text();
+			document.getElementById("hidden_select").value = selected.val();
 
 		    $("#select_item").bind('change', function(){
 			var selected = $("option:selected", this);
 			document.getElementById("item_name_edit").value = selected.text();
-			document.getElementById("hidden_select").value = selected.text();
+			document.getElementById("hidden_select").value = selected.val();
 		    });
 		},
 		error: function(){
@@ -68,8 +68,9 @@ $(document).ready(function(){
     });
 
     $("#delete_item").click(function(){
+	var item_name = document.getElementById("item_name_edit").value = selected.text();
 	var cur_item = document.getElementById("hidden_select").value;
-	var cont = confirm("Are you sure you want to delete "+cur_item+"?");
+	var cont = confirm("Are you sure you want to delete "+item_name+"?");
 	if(cont){
 	    $.ajax({type:"DELETE",
 		    url: base_url+"/repairItem/"+cur_item,

@@ -744,7 +744,7 @@
 	/*Deletes the association between a category :category and repair business :business */
 	$app->delete('/reuse/:category/:business', function($category, $business){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$category = $mysqli->real_escape_string($category);
+		$category = (int)$mysqli->real_escape_string($category);
 		$business = (int)$mysqli->real_escape_string($business);
 		
 		$stmt = $mysqli->prepare("DELETE FROM reuse_bus_categories WHERE (bid = ? AND cid = ?)");

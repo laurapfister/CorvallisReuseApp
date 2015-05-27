@@ -7,7 +7,7 @@
 	*/
 	ini_set('display_errors', 1);
 	require '../vendor/autoload.php';
-	require_once('../php-opencage-geocode/src/OpenCage.Geocoder.php')
+	require_once('../php-opencage-geocode/src/OpenCage.Geocoder.php');
 
 	
 	
