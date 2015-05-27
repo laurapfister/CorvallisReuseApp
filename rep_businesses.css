@@ -139,6 +139,7 @@ section{
     padding: 5px;
     border-radius: 5px;
     border: none;
+    display: inline-block;
 }
 
 input{
@@ -205,7 +206,7 @@ input{
 }
 
 .busi-wrapper{
-    width: 240px;
+    width: 250px;
     display:inline-table;
     position:relative;
     float: left;
@@ -234,7 +235,12 @@ input{
 }
 
 .add-item{
-    display: block;
     position: relative;
     margin: 5px;
+    display: inline-block;
+}
+
+.item-group{
+    position: relative;
+    display: block;
 }
