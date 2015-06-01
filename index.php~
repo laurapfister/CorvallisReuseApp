@@ -6,8 +6,10 @@
 	    reuse_businesses, reuse_items, reuse_categories
 	*/
 	ini_set('display_errors', 1);
+	
 	require '../vendor/autoload.php';
-	require_once('../php-opencage-geocode/src/OpenCage.Geocoder.php')
+	require_once('../php-opencage-geocode/src/OpenCage.Geocoder.php');
+	require '../oauth2-server-php/src/OAuth2/Autoloader.php';
 
 	
 	
@@ -31,7 +33,7 @@
         */
 	$app->get('/repair', function() {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT repairId, repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairHours, repairWeb, repairLongitude, repairLatitude FROM repair_businesses');
+		$result = $mysqli->query('SELECT repairId, repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairHours, repairWeb, repairLongitude, repairLatitude FROM repair_businesses ORDER BY repairName ASC');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -83,7 +85,7 @@
         */
 	$app->get('/repair_busi_items/:id', function($id){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$stmt = $mysqli->prepare("SELECT ri.itemId, ri.itemName FROM repair_items AS ri INNER JOIN rep_bus_items AS rbi ON rbi.iId = ri.itemId WHERE rbi.bId = ?");
+		$stmt = $mysqli->prepare("SELECT ri.itemId, ri.itemName FROM repair_items AS ri INNER JOIN rep_bus_items AS rbi ON rbi.iId = ri.itemId WHERE rbi.bId = ? ORDER BY ri.itemName ASC");
 		
 		$id = (int)$mysqli->real_escape_string($id);
 		$stmt->bind_param("i", $id);
@@ -106,7 +108,7 @@
 	*/
 	$app->get('/repairItem', function() {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT itemId, itemName FROM repair_items');
+		$result = $mysqli->query('SELECT itemId, itemName FROM repair_items ORDER BY itemName ASC');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -160,7 +162,7 @@
  	*/	
 	$app->get('/repairItem/:item', function($item) {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$stmt = $mysqli->prepare("SELECT repairId, repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairHours, repairWeb, repairAddInfo, repairLongitude, repairLatitude FROM repair_businesses AS rb INNER JOIN rep_bus_items AS rbi ON rb.repairId = rbi.bId INNER JOIN repair_items AS ri ON ri.itemId = rbi.iId WHERE ri.itemId = ?");
+		$stmt = $mysqli->prepare("SELECT repairId, repairName, repairAddress, repairCity, repairState, repairZip, repairPhone, repairHours, repairWeb, repairAddInfo, repairLongitude, repairLatitude FROM repair_businesses AS rb INNER JOIN rep_bus_items AS rbi ON rb.repairId = rbi.bId INNER JOIN repair_items AS ri ON ri.itemId = rbi.iId WHERE ri.itemId = ? ORDER BY repairName ASC");
 		$item = (int)$mysqli->real_escape_string($item);
 		$stmt->bind_param("i", $item);
 		$stmt->execute();
@@ -179,6 +181,9 @@
 		$mysqli->close();
 	});
 
+
+	
+		
 	/*Updates the a repair Item specified by an item id, in the first argument :item, and changes its name to :new_item*/
 	
 	$app->patch('/repairItem/:item/:new_item', function($item, $new_item){
@@ -440,7 +445,7 @@
         */
 	$app->get('/reuse', function(){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT reuseId, reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reusePhone, reuseWeb, reuseHours, reuseLongitude, reuseLatitude FROM reuse_businesses');
+		$result = $mysqli->query('SELECT reuseId, reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reusePhone, reuseWeb, reuseHours, reuseLongitude, reuseLatitude FROM reuse_businesses ORDER BY reuseName ASC');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -490,7 +495,7 @@
 	*/
 	$app->get('/reuseItems', function(){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT ri.itemId, ri.itemName, rc.categoryName FROM reuse_items AS ri LEFT JOIN reuse_categories as rc ON rc.categoryId = ri.categoryId');
+		$result = $mysqli->query('SELECT ri.itemId, ri.itemName, rc.categoryId, rc.categoryName FROM reuse_items AS ri LEFT JOIN reuse_categories as rc ON rc.categoryId = ri.categoryId ORDER BY ri.itemName ASC');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -507,7 +512,7 @@
 	*/
 	$app->get('/reuseCategory', function() {
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$result = $mysqli->query('SELECT categoryId, categoryName FROM reuse_categories');
+		$result = $mysqli->query('SELECT categoryId, categoryName FROM reuse_categories ORDER BY categoryName ASC');
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
 			$myArray[] = $row;
@@ -525,7 +530,7 @@
 	*/
 	$app->get('/reuseItems/:category', function($category){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$stmt = $mysqli->prepare("SELECT ri.itemId, ri.itemName FROM reuse_items AS ri INNER JOIN reuse_categories as rc ON rc.categoryId = ri.categoryId WHERE rc.categoryId = ?");
+		$stmt = $mysqli->prepare("SELECT ri.itemId, ri.itemName FROM reuse_items AS ri INNER JOIN reuse_categories as rc ON rc.categoryId = ri.categoryId WHERE rc.categoryId = ? ORDER BY ri.itemName ASC");
 
 		$category = (int)$mysqli->real_escape_string($category);
 		$stmt->bind_param("i", $category);
@@ -556,7 +561,7 @@
 	*/
 	$app->get('/reuseBus/:category', function($category){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
-		$stmt = $mysqli->prepare("SELECT reuseId, reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reusePhone, reuseWeb, reuseHours, reuseLongitude, reuseLatitude FROM reuse_businesses AS rb INNER JOIN reuse_bus_categories AS rbc ON rbc.bid = rb.reuseId INNER JOIN reuse_categories as rc ON rc.categoryID = rbc.cid WHERE rc.categoryName = ?");
+		$stmt = $mysqli->prepare("SELECT reuseId, reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reusePhone, reuseWeb, reuseHours, reuseLongitude, reuseLatitude FROM reuse_businesses AS rb INNER JOIN reuse_bus_categories AS rbc ON rbc.bid = rb.reuseId INNER JOIN reuse_categories as rc ON rc.categoryID = rbc.cid WHERE rc.categoryName = ? ORDER BY rb.reuseName ASC");
 		$stmt->bind_param("s", $category);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -569,6 +574,29 @@
 		$result->close();
 		$mysqli->close();
 	});
+	/*Gets all categories associated with a business specified by id*/
+	$app->get('/reuse_busi_cats/:id', function($id){
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$stmt = $mysqli->prepare("SELECT rc.categoryName, rc.categoryId FROM reuse_categories as rc INNER JOIN reuse_bus_categories as rbc ON rbc.cid = rc.categoryId WHERE rbc.bid = ?");
+		$id = (int)$mysqli->real_escape_string($id);
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		while($row = $result->fetch_array(MYSQL_ASSOC)){
+			$myArray[] = $row;
+		}
+		if(isset($myArray)){
+			echo json_encode($myArray);
+		}
+		else{
+			$myArray[] = NULL;
+			echo json_encode($myArray);
+		}
+		$result->close();
+		$mysqli->close();
+
+	});
+
 	/*Adds a new Business to reuse_businesses table. Data is required in the following JSON format:
 		reuseName - name of Business
  		reuseAddress - address of Business
@@ -626,6 +654,7 @@
 		$stmt = $mysqli->prepare("INSERT INTO reuse_businesses(reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reusePhone, reuseWeb,reuseHours, reuseLongitude, reuseLatitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		$stmt->bind_param("ssssssssdd", $name, $address, $city, $state, $zip, $phone, $web, $hours, $long, $lat);
 		$stmt->execute();
+		echo $stmt->insert_id;
 		$mysqli->close();
 		
 	});
@@ -651,16 +680,10 @@
 		if(isset($params->category)){
 			$category = $mysqli->real_escape_string((string)$params->category);
 		}
-		$stmt = $mysqli->prepare("INSERT INTO reuse_items(itemName) VALUES(?)");
-		$stmt->bind_param("s", $item);
+		$stmt = $mysqli->prepare("INSERT INTO reuse_items(itemName, categoryId) VALUES(?, ?)");
+		$stmt->bind_param("si", $item, $category);
 		$stmt->execute();
-	
-		if(isset($category)){
-			$stmt = $mysqli->prepare("UPDATE reuse_items SET categoryId = (SELECT categoryId FROM reuse_categories WHERE categoryName = ?) WHERE itemName = ?");
-			$stmt->bind_param("ss", $category, $item);
-			$stmt->execute();		
-	
-		}
+		
 		$mysqli->close();
 		
 	});
@@ -674,8 +697,8 @@
 		$params = json_decode($body);
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 
-		if(isset($params->category)){	
-			$category = $mysqli->real_escape_string((string)$params->category);
+		if(isset($params->categoryName)){	
+			$category = $mysqli->real_escape_string((string)$params->categoryName);
 		}
 		else{
 			$app->response->setStatus(400);
@@ -754,7 +777,127 @@
 		$mysqli->close(); 
 	});
 	
+	$app->patch('/reuse/:id', function($id) use($app){
+		$request = $app->request();
+		$body = $request->getBody();
+		$params = json_decode($body);
 
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		
+
+		$new_name = $request->params('businessName');
+		$address = $request->params('Address');
+		$state = $request->params('state');
+		$zip = $request->params('zip');
+		$phone = $request->params('phone');
+		
+		if(isset($params->businessName)){
+			$new_name = $mysqli->real_escape_string((string)$params->businessName);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->Address)){
+			$address = $mysqli->real_escape_string((string)$params->Address);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->city)){
+			$city = $mysqli->real_escape_string((string)$params->city);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->state)){
+			$state = $mysqli->real_escape_string((string)$params->state);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->zip)){
+			$zip = $mysqli->real_escape_string((string)$params->zip);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->phone)){
+			$phone = $mysqli->real_escape_string((string)$params->phone);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->website)){
+			$website = $mysqli->real_escape_string((string)$params->website);
+		}
+		if(isset($params->hours)){
+			$hours = $mysqli->real_escape_string((string)$params->hours);
+		}
+		
+		if(isset($address) && isset($city) && isset($state)){
+			$key = "39ee84f3ae0ca490055ca19becda2846";
+			$geocoder = new OpenCage\Geocoder($key);
+			$query = $address." ".$city.",".$state;
+			$geo_res = $geocoder->geocode($query);
+			$lat = $geo_res["results"][0]["geometry"]["lat"];
+			$long = $geo_res["results"][0]["geometry"]["lng"];
+		};
+		$id = (int)$mysqli->real_escape_string($id);
+		
+		$stmt = $mysqli->prepare("UPDATE reuse_businesses SET reuseName = ?, reuseAddress= ?, reuseCity= ?, reuseState= ?, reuseZip= ?, reusePhone= ?, reuseWeb= ?, reuseHours= ?, reuseLongitude= ?, reuseLatitude= ? WHERE repairId = ?");
+		
+		$stmt->bind_param("ssssssssddi", $new_name, $address, $city, $state, $zip, $phone, $website, $hours, $long, $lat, $id);
+		$stmt->execute();
+		$mysqli->close();
+	
+	});
+
+	/*Updates the a reuse Category specified by a category id, in the first argument :cat, and changes its name to :new_cat*/
+	
+	$app->patch('/reuseCategory/:cat/:new_cat', function($cat, $new_cat){
+
+		
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$stmt = $mysqli->prepare("UPDATE reuse_categories SET categoryName = ? WHERE categoryId = ?");
+		$stmt->bind_param("si", $new_cat, $cat);
+		$stmt->execute();
+		echo $cat, $new_cat;
+	});
+
+	/*Updates the a reuse Item specified by an item id, in the first argument :item, requires the following in JSON format:
+		itemName - desired item name
+		categoryId - desired category id
+	*/
+	
+	$app->patch('/reuseItems/:item', function($item) use($app){
+		$request = $app->request();
+		$body = $request->getBody();
+		$params = json_decode($body);
+
+		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
+		$stmt = $mysqli->prepare("UPDATE reuse_items SET itemName = ?, categoryId = ? WHERE itemId = ?");
+		if(isset($params->itemName)){	
+			$new_item = $mysqli->real_escape_string((string)$params->itemName);
+		}
+		else{
+			$app->response->setStatus(400);
+			exit(1);
+		}
+		if(isset($params->category)){
+			$category = (int)$mysqli->real_escape_string((string)$params->category);
+		}
+		
+		
+		$item = (int)$mysqli->real_escape_string($item);
+		$stmt->bind_param("sii", $new_item, $category, $item);
+		$stmt->execute();
+	});
 	
 	$app->run();
 ?>
