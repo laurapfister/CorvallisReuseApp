@@ -591,6 +591,7 @@
 	$app->get('/reuseBus/:category', function($category){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("SELECT reuseId, reuseName, reuseAddress, reuseCity, reuseState, reuseZip, reusePhone, reuseWeb, reuseHours, reuseLongitude, reuseLatitude FROM reuse_businesses AS rb INNER JOIN reuse_bus_categories AS rbc ON rbc.bid = rb.reuseId INNER JOIN reuse_categories as rc ON rc.categoryId = rbc.cid WHERE rc.categoryId = ? ORDER BY rb.reuseName ASC");
+		$stmt->bind_param("i", $category);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		while($row = $result->fetch_array(MYSQL_ASSOC)){
