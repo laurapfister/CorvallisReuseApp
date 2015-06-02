@@ -1,4 +1,4 @@
-
+/*Ajax call to login.php. Provides login functionality for web interface*/
 $(document).ready(function(){
     $("#login").click(function(){
 	$.ajax({type:"POST", 

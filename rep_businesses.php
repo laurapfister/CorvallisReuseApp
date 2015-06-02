@@ -1,4 +1,5 @@
 <?php
+	/*Checks if token exists, and is valid. Otherwise redirects to login page*/
   	include 'check_token.php';
 	check_token();
 	
@@ -76,7 +77,7 @@
     
     <!--- Edit Existing Business here --->
     <section>
-      <h3> Edit Existing Business </h3>
+      <h3> Edit or Delete Existing Business </h3>
       <div class="body-wrap">
 	<div class="input-wrap">
 	  <form>

@@ -1,4 +1,5 @@
 <?php
+	/*Checks if token exists, and is valid. Otherwise redirects to login page*/
   	include 'check_token.php';
 	check_token();
 	
@@ -11,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="corvallis.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   </head>
-  
+  <!-- Home Page -->
   <body>
     <div id="header-wrap">
       <div id="logo"></div>
@@ -20,6 +21,7 @@
 
 	 <input type="button" class="button" id="logout" value="Logout">
     </div>
+	<!-- Sub Menu for Reuse Businesses -->
     <div id="menu-wrap">
       <div class="sub-menu-wrap">
 	<ul>
@@ -33,6 +35,7 @@
 	  </li>
 	</ul>
       </div>
+	<!-- Sub Menu for Repair Businesses -->
       <div class="sub-menu-wrap">
 	<ul>
 	  <li class="menu-header">Repair</li>

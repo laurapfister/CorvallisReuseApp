@@ -5,7 +5,6 @@
 	    repair_businesses, repair_items
 	    reuse_businesses, reuse_items, reuse_categories
 	*/
-	ini_set('display_errors', 1);
 	
 	require '../vendor/autoload.php';
 	require_once('../php-opencage-geocode/src/OpenCage.Geocoder.php');
@@ -18,6 +17,7 @@
 	$app = new \Slim\Slim();
 	$app->response->headers->set('Content-Type', 'application/json');
 	
+	/*Function to check if stored token exists, and is good. If not good returns an error to the users*/
 	$check_token = function(\Slim\Route $route) use($app){
 				session_start();
 				if(!isset($_SESSION['token'])){
@@ -215,7 +215,7 @@
 		
 	/*Updates the a repair Item specified by an item id, in the first argument :item, and changes its name to :new_item*/
 	
-	$app->patch('/repairItem/:item/:new_item', function($item, $new_item){
+	$app->patch('/repairItem/:item/:new_item', $check_token, function($item, $new_item){
 
 		
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
@@ -239,7 +239,7 @@
                hours - hours of Business (optional)
                addInfo - Additional Business info (optional)
         */
-	$app->post('/repair', function() use ($app){
+	$app->post('/repair', $check_token, function() use ($app){
 		
 		$request = $app->request();
 		$body = $request->getBody();
@@ -319,7 +319,7 @@
 	});
 	
 	/*Deletes the business specified by repairId :id*/
-	$app->delete('/repair/:id', function($id){
+	$app->delete('/repair/:id', $check_token, function($id){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 
 		$id = $mysqli->real_escape_string($id);
@@ -330,7 +330,7 @@
 	});
 	
 	/*Deletes the item specified by :item, an itemId*/
-	$app->delete('/repairItem/:item', function($item){
+	$app->delete('/repairItem/:item', $check_token, function($item){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$item = (int)$mysqli->real_escape_string($item);
 		$stmt = $mysqli->prepare("DELETE FROM repair_items WHERE itemId = ?");
@@ -340,7 +340,7 @@
 	});
 	
 	/*Deletes the association between a business, specified by repairId: id, and an item specified by itemId: item*/
-	$app->delete('/repair/:id/:item', function($id, $item){
+	$app->delete('/repair/:id/:item', $check_token, function($id, $item){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("DELETE FROM rep_bus_items WHERE (bId = ? AND iId = ?)");
 
@@ -352,7 +352,7 @@
 	});
 	
 	/*Adds as association between a business, specified by repairId: id, and an item specified by itemId: item*/
-	$app->put('/repair/:id/:item', function($id, $item){
+	$app->put('/repair/:id/:item', $check_token, function($id, $item){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$stmt = $mysqli->prepare("INSERT INTO rep_bus_items(bId, iId) VALUES(?, ?)");
 
@@ -374,7 +374,7 @@
                hours - hours of Business (optional)
                addInfo - Additional Business info (optional)
 	*/
-	$app->patch('/repair/:id', function($id) use($app){
+	$app->patch('/repair/:id', $check_token, function($id) use($app){
 		$request = $app->request();
 		$body = $request->getBody();
 		$params = json_decode($body);
@@ -636,7 +636,7 @@
 		web - website of business
 		hours - hours of business
 	*/	
-	$app->post('/reuse', function() use($app){
+	$app->post('/reuse', $check_token, function() use($app){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$request = $app->request();
 		$body = $request->getBody();
@@ -692,7 +692,7 @@
 		itemName - name of new item
 		category - name of category
 	*/
-	$app->post('/reuseItems', function() use ($app){
+	$app->post('/reuseItems', $check_token, function() use ($app){
 
 		$request = $app->request();
 		$body = $request->getBody();
@@ -719,7 +719,7 @@
 	/*Adds new category to the reuse_categories table. Data must be provided in JSON format as follows:
 		category : name of new category
 	*/
-	$app->post('/reuseCategory', function() use($app){
+	$app->post('/reuseCategory', $check_token, function() use($app){
 		
 		$request = $app->request();
 		$body = $request->getBody();
@@ -742,7 +742,7 @@
 		
 	});
 	/*Creates new association between categoryId :category, and reuse_business: business*/
-	$app->put('/reuse/:category/:business', function($category, $business){
+	$app->put('/reuse/:category/:business', $check_token, function($category, $business){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 
 		$category = (int)$mysqli->real_escape_string($category);
@@ -757,7 +757,7 @@
 	});
 
 	/*Deletes the business specified by reuseId : id from reuse_businesses table */
-	$app->delete('/reuse/:id', function($id){
+	$app->delete('/reuse/:id', $check_token, function($id){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$id = (int)$mysqli->real_escape_string($id);
 
@@ -770,7 +770,7 @@
 	
 	});
 	/*Deletes the items specified by :item from the reuse_items table*/
-	$app->delete('/reuseItems/:item', function($item){
+	$app->delete('/reuseItems/:item', $check_token, function($item){
 
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$item = (int)$mysqli->real_escape_string($item);
@@ -782,7 +782,7 @@
 
 	});
 	/*Deletes the category specified by :category from the reuse_items table*/
-	$app->delete('/reuseCategory/:category', function($category){
+	$app->delete('/reuseCategory/:category', $check_token, function($category){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$category = (int)$mysqli->real_escape_string($category);
 
@@ -794,7 +794,7 @@
 
 	});
 	/*Deletes the association between a category :category and repair business :business */
-	$app->delete('/reuse/:category/:business', function($category, $business){
+	$app->delete('/reuse/:category/:business', $check_token, function($category, $business){
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 		$category = (int)$mysqli->real_escape_string($category);
 		$business = (int)$mysqli->real_escape_string($business);
@@ -806,7 +806,7 @@
 		$mysqli->close(); 
 	});
 	
-	$app->patch('/reuse/:id', function($id) use($app){
+	$app->patch('/reuse/:id', $check_token, function($id) use($app){
 		$request = $app->request();
 		$body = $request->getBody();
 		$params = json_decode($body);
@@ -889,7 +889,7 @@
 
 	/*Updates the a reuse Category specified by a category id, in the first argument :cat, and changes its name to :new_cat*/
 	
-	$app->patch('/reuseCategory/:cat/:new_cat', function($cat, $new_cat){
+	$app->patch('/reuseCategory/:cat/:new_cat', $check_token, function($cat, $new_cat){
 
 		
 		$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
@@ -904,7 +904,7 @@
 		categoryId - desired category id
 	*/
 	
-	$app->patch('/reuseItems/:item', function($item) use($app){
+	$app->patch('/reuseItems/:item', $check_token, function($item) use($app){
 		$request = $app->request();
 		$body = $request->getBody();
 		$params = json_decode($body);

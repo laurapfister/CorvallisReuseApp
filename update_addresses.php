@@ -2,12 +2,14 @@
 
 <?php
 
-
+	/*One time script used to add latitude and longitude to all businesses in database*/
 	require_once('./src/OpenCage.Geocoder.php');
 
 
 	$key = "39ee84f3ae0ca490055ca19becda2846";
 	$geocoder = new OpenCage\Geocoder($key);
+
+	/*Add longitude and latitude to repair businesses*/
 
 	$mysqli = new mysqli("mysql.eecs.oregonstate.edu", "cs419-g4", "RNjFRsBYJK5DVF8d", "cs419-g4");
 	$result = $mysqli->query('SELECT repairId, repairName, repairAddress, repairCity, repairState FROM repair_businesses');
@@ -29,6 +31,8 @@
 	};
 	$result->free();
 	
+
+	/*Add longitude and latitude to reuse businesses*/
 	$result = $mysqli->query('SELECT reuseId, reuseName, reuseAddress, reuseCity, reuseState FROM reuse_businesses');
 
 	while($row = $result->fetch_assoc()){

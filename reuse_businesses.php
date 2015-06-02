@@ -1,4 +1,5 @@
 <?php
+	/*Checks if token exists, and is valid. Otherwise redirects to login page*/
   	include 'check_token.php';
 	check_token();
 	
@@ -95,7 +96,7 @@
 	</div>
 	<!--ADD additonal Categories  here --->
 	<div class="input-wrap">
-	  <label>Items this Business Repairs
+	  <label>Categories this Business Reuses
 	    <div id="existing_cats"></div>
 	    <input class="button" type="button" value="+ Add Another Category" id="edit_more_cats">
 	  </label>

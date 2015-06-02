@@ -1,3 +1,4 @@
+/*Javascript file for reuse_businesses.php*/
 var base_url = "http://web.engr.oregonstate.edu/~pfisterl/cs419/api/index.php";
 
 $(document).ready(function(){
@@ -5,11 +6,13 @@ $(document).ready(function(){
 
     var cat_edits = [];
     var all_cats = "";
-
+    
+    /*Ajax call to get all categories from database*/
     var get_all_cats = $.ajax({type:"GET",
 				data:"json",
 				url: base_url+"/reuseCategory"});
-	
+
+    /*Gets all categories from database. Add them to Add Business section*/
     function add_cats(){
 	get_all_cats.done(function(data){
 	    var cats = "<select name='select_cat' class='add-cat' >";
@@ -23,31 +26,34 @@ $(document).ready(function(){
 	});
     }
 	
-
+    /*Ajax call to get all reuse businesses from database.*/
     var get_businesses = $.ajax({type:"GET",
 				 url: base_url+"/reuse",
 				 dataType: 'json'
 				});
 
 
+    /*Removes category from list of "Categories this Business Reuses*/
     var delete_cat = function(){
 	$(".remove_cat").bind('click', function(){
 	    $(this).parent().remove();
 	});
     }
 
-
+    /*Ajax call to remove association between category and business*/
     var delete_assoc = function(id, category){
 	$.ajax({type:"DELETE",
 		url: base_url + "/reuse/"+category+"/"+id});
 	}
     
+    /*Ajax call to create association between category and business*/
     var create_assoc = function(id, category){
 	$.ajax({type:"PUT",
 		url: base_url + "/reuse/"+category+"/"+id});
 	}
 
 
+    /*Loads associated categories to "Categories this Business Reuses" section*/
     var load_cat_edits = function(){
 	
 	get_all_cats.done(function(data2){
@@ -64,7 +70,6 @@ $(document).ready(function(){
 		    dataType: 'json',
 		    success:function(data){
 			var cats = "";
-			console.log(data);
 			$("#existing_cats").html(cats);
 			for(var i = 0; i < data.length; i++){
 			    cats = "";
@@ -81,6 +86,7 @@ $(document).ready(function(){
 	});
     }
 
+    /*Gets info from selected business and populates the Edit fields*/
     var select_change = function(){ 
 	$("#select_cat").bind('change', function(){
 	    var selected = $("option:selected", this);
@@ -102,7 +108,7 @@ $(document).ready(function(){
 		   });
 	});
     }
-
+    /*Creates list of businesses at bottom of page, and populates existing businesses dropdown field*/
     var load_business = function (){
 	get_businesses.done(function(data){
 		    var busis = "<select name='select_cat' id='select_cat'><option>---------------</option>";
@@ -148,6 +154,7 @@ $(document).ready(function(){
     load_business();
     add_cats();
 
+    /*When "Add another Category" is selected it adds a new dropdown menu of categories*/
     $("#edit_more_cats").click(function(){
 	var cats = "";
 	cats += "<div id=cat_group><select name='edit_cat' class='edit-cat'>";
@@ -160,16 +167,16 @@ $(document).ready(function(){
 			    
 	    
 
-
+    /*Adds newly created business to the database*/
     $("#add_busi").click(function(){
-	var name = document.getElementById("bname").value;
-	var address = document.getElementById("address").value;
-	var city = document.getElementById("city").value;
-	var state = document.getElementById("state").value;
-	var zip = document.getElementById("zip").value;
-	var phone = document.getElementById("phone").value;
-	var web = document.getElementById("website").value;
-	var hours = document.getElementById("hours").value;
+	var name = $("#bname").val();
+	var address = $("#address").val();
+	var city = $("#city").val();
+	var state = $("#state").val();
+	var zip = $("#zip").val();
+	var phone = $("#phone").val();
+	var web = $("#website").val();
+	var hours = $("#hours").val();
 
 	$.ajax({type:"POST",
 		url: base_url+"/reuse",
@@ -196,9 +203,10 @@ $(document).ready(function(){
 		});
 	});
 
+    /*Deletes selected business from the database, only after use confirmation*/
     $("#del_busi").click(function(){
-	var busi_id = document.getElementById("hidden_busi").value;
-	var busi_name = document.getElementById("ebname").value;
+	var busi_id = $("#hidden_busi").val();
+	var busi_name = $("#ebname").val();
 	var cont = confirm("Are you sure you want to delete " + busi_name);
 	if(cont){
 	    $.ajax({type:"DELETE",
@@ -209,17 +217,17 @@ $(document).ready(function(){
 		   });
 	}
     });
-
+    /*Saves edits made to selected business when "Save Edit" button is clicked*/
     $("#edit_busi").click(function(){
-	var name = document.getElementById("ebname").value;
-	var address = document.getElementById("eaddress").value;
-	var city = document.getElementById("ecity").value;
-	var state = document.getElementById("estate").value;
-	var zip = document.getElementById("ezip").value;
-	var phone = document.getElementById("ephone").value;
-	var web = document.getElementById("ewebsite").value;
-	var hours = document.getElementById("ehours").value;
-	var busi_id = document.getElementById("hidden_busi").value;
+	var name = $("#ebname").val();
+	var address = $("#eaddress").val();
+	var city = $("#ecity").val();
+	var state = $("#estate").val();
+	var zip = $("#ezip").val();
+	var phone = $("#ephone").val();
+	var web = $("#ewebsite").val();
+	var hours = $("#ehours").val();
+	var busi_id = $("#hidden_busi").val();
 	$.ajax({type:"PATCH",
 		url: base_url + "/reuse/" + busi_id,
 		contentType: 'application/json',
@@ -246,7 +254,9 @@ $(document).ready(function(){
 		
 	       });
     });
-	
+    /*Adds event handler to new category sections, "Add More Categories
+      Adds a new list of drop down categories upon clicking
+     */
     $("#more_cats").click(function(){
 	add_cats();
     });

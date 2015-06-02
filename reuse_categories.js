@@ -1,3 +1,4 @@
+/*Javascript page for reuse_categories.js*/
 var base_url = "http://web.engr.oregonstate.edu/~pfisterl/cs419/api/index.php";
 
 
@@ -5,6 +6,9 @@ var base_url = "http://web.engr.oregonstate.edu/~pfisterl/cs419/api/index.php";
 
 $(document).ready(function(){
 
+    /*Gets all categories from database, adds them to Edit section, and bottom list
+      Also creates event handler for drop down edit menu
+    */
     function load_cats(){$.ajax({type:"GET",
 		url: base_url+"/reuseCategory",
 		dataType: 'json',
@@ -21,17 +25,17 @@ $(document).ready(function(){
 			list += "</div>";
 		    }
 		    cats += "</select>";
-		    document.getElementById("cur_cats").innerHTML = cats;
-		    document.getElementById("cat_list").innerHTML = list;
+		    $("#cur_cats").html(cats);
+		    $("#cat_list").html(list);
 		    
 		    var selected = $("option:selected", this);
-			document.getElementById("cat_name_edit").value = selected.text();
-			document.getElementById("hidden_select").value = selected.val();
+		    $("#cat_name_edit").val(selected.text());
+		    $("#hidden_select").val(selected.val());
 
 		    $("#select_cat").bind('change', function(){
 			var selected = $("option:selected", this);
-			document.getElementById("cat_name_edit").value = selected.text();
-			document.getElementById("hidden_select").value = selected.val();
+			$("#cat_name_edit").val(selected.text());
+			$("#hidden_select").val(selected.val());
 		    });
 		},
 		error: function(){
@@ -41,10 +45,10 @@ $(document).ready(function(){
 	}
     load_cats();
 
-
+    /*Event handler for "Save Edit" button. Saves the edits of the selected category to the database*/
     $("#edit_cat").click(function(){
-	var cur_cat = document.getElementById("hidden_select").value;
-	var new_cat = document.getElementById("cat_name_edit").value;
+	var cur_cat = $("#hidden_select").val();
+	var new_cat = $("#cat_name_edit").val();
 	$.ajax({type:"PATCH",
 		url: base_url+"/reuseCategory/"+cur_cat+"/"+new_cat,
 		dataType: 'json'
@@ -53,9 +57,9 @@ $(document).ready(function(){
 		   });
 		    
     });
-
+    /*Event Handler for "Add Category" button. Adds the new category name to the database*/
     $("#add_cat").click(function(){
-	var new_cat = document.getElementById("iname").value;
+	var new_cat = $("#iname").val();
 	$.ajax({type:"POST",
 		url:base_url+"/reuseCategory",
 		dataType: 'json',
@@ -63,13 +67,13 @@ $(document).ready(function(){
 		data:JSON.stringify({'categoryName': new_cat})
 	       }).always(function(){
 		   load_cats();
-		   document.getElementById("iname").value = "";
+		   $("#iname").val("");
 		   });
     });
-
+    /*Event handler for "Delete Category" button. Deletes the selected category, but only have user confirmation*/
     $("#delete_cat").click(function(){
-	var cat_name = document.getElementById("cat_name_edit").value;
-	var cur_cat = document.getElementById("hidden_select").value;
+	var cat_name = $("#cat_name_edit").val();
+	var cur_cat = $("#hidden_select").val();
 	var cont = confirm("Are you sure you want to delete "+cat_name+"?");
 	if(cont){
 	    $.ajax({type:"DELETE",

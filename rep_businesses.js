@@ -6,10 +6,13 @@ $(document).ready(function(){
     var item_edits = [];
     var all_items = "";
 
+    /*Ajax call to get all items from database*/
     var get_all_items = $.ajax({type:"GET",
 				data:"json",
 				url: base_url+"/repairItem"});
 	
+    
+    /*Adds all items to dropdown list in create new business section*/
     function add_items(){
 	get_all_items.done(function(data){
 	    var items = "<select name='select_item' class='add-item' >";
@@ -24,31 +27,35 @@ $(document).ready(function(){
     }
 	
 
+    /*Ajax call to get all repair businesses from database*/
     var get_businesses = $.ajax({type:"GET",
 				 url: base_url+"/repair",
 				 dataType: 'json'
 				});
 
 
+    /*Ajax call to remove item from Items this Business Repairs*/
     var delete_item = function(){
 	$(".remove_item").bind('click', function(){
 	    $(this).parent().remove();
 	});
     }
 
-
+    /*Deletes the association between an item and business*/
     var delete_assoc = function(id, item){
 	$.ajax({type:"DELETE",
 		url: base_url + "/repair/"+id+"/"+item});
 	console.log(id);
 	}
-    
+
+    /*Creates association between item and business*/
     var create_assoc = function(id, item){
 	$.ajax({type:"PUT",
 		url: base_url + "/repair/"+id+"/"+item});
 	}
 
 
+    /*Gets all items associated with selected business and adds them to Items this Business repairs*/
     var load_item_edits = function(){
 	
 	get_all_items.done(function(data2){
@@ -81,6 +88,7 @@ $(document).ready(function(){
 	});
     }
 
+    /*Populates edit fields when business is selected from dropdown menu*/
     var select_change = function(){ 
 	$("#select_item").bind('change', function(){
 	    var selected = $("option:selected", this);
@@ -104,6 +112,7 @@ $(document).ready(function(){
 	});
     }
 
+    /*Adds all existing businesses to drop down select menu in edit exisitng businesses section*/
     var load_business = function (){
 	get_businesses.done(function(data){
 		    var busis = "<select name='select_item' id='select_item'><option>---------------</option>";
@@ -145,6 +154,7 @@ $(document).ready(function(){
     load_business();
     add_items();
 
+    /*Adds new drop down menu of items to "Items this Business Repairs"*/
     $("#edit_more_items").click(function(){
 	var items = "";
 	items += "<div id=item_group><select name='edit_item' class='edit-item'>";
@@ -157,7 +167,7 @@ $(document).ready(function(){
 			    
 	    
 
-
+    /*Adds new business to database*/
     $("#add_busi").click(function(){
 	var name = document.getElementById("bname").value;
 	var address = document.getElementById("address").value;
@@ -193,9 +203,10 @@ $(document).ready(function(){
 		    });
 	});
 
+    /*Deletes selected business from database, only after user confirmation*/
     $("#del_busi").click(function(){
-	var busi_id = document.getElementById("hidden_busi").value;
-	var busi_name = document.getElementById("ebname").value;
+	var busi_id = $("#hidden_busi").val();
+	var busi_name = $("#ebname").val();
 	var cont = confirm("Are you sure you want to delete " + busi_name);
 	if(cont){
 	    $.ajax({type:"DELETE",
@@ -207,17 +218,18 @@ $(document).ready(function(){
 	}
     });
 
+    /*Saves edits of business when "Save Edit" is clicked*/
     $("#edit_busi").click(function(){
-	var name = document.getElementById("ebname").value;
-	var address = document.getElementById("eaddress").value;
-	var city = document.getElementById("ecity").value;
-	var state = document.getElementById("estate").value;
-	var zip = document.getElementById("ezip").value;
-	var phone = document.getElementById("ephone").value;
-	var web = document.getElementById("ewebsite").value;
-	var hours = document.getElementById("ehours").value;
-	var addInfo = document.getElementById("eaddInfo").value;
-	var busi_id = document.getElementById("hidden_busi").value;
+	var name = $("#ebname").val();
+	var address = $("#eaddress").val();
+	var city = $("#ecity").val();
+	var state = $("#estate").val();
+	var zip = $("#ezip").val();
+	var phone = $("#ephone").val();
+	var web = $("#ewebsite").val();
+	var hours = $("#ehours").val();
+	var addInfo = $("#eaddInfo").val();
+	var busi_id = $("#hidden_busi").val();
 	$.ajax({type:"PATCH",
 		url: base_url + "/repair/" + busi_id,
 		contentType: 'application/json',
@@ -244,7 +256,8 @@ $(document).ready(function(){
 		   });
 	       });
     });
-	
+
+    /*Adds more items dropdown to create new business section*/
     $("#more_items").click(function(){
 	add_items();
     });

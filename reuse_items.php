@@ -1,4 +1,6 @@
 <?php
+
+	/*Checks if token exists, and is valid. Otherwise redirects to login page*/
   	include 'check_token.php';
 	check_token();
 	

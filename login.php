@@ -24,7 +24,7 @@
 		$resp = json_decode($resp);
 		$access_token = $resp->{'access_token'};
 		
-	
+		/*Store token in session*/
 		$_SESSION['token'] = $access_token;
 		curl_close($curl);
 	}
