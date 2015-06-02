@@ -37,6 +37,7 @@
 	      </ul>
 	    </li>
 	  </ul>
+	  <input type="button" class="button" id="logout" value="Logout">
 	</nav>
       </div>
     </div>
@@ -111,5 +112,6 @@
 
 
       <script src="reuse_businesses.js"></script>
+      <script src="logout.js"></script>
   </body>
 </html>

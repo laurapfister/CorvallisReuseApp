@@ -244,3 +244,11 @@ input{
     position: relative;
     display: block;
 }
+
+#logout{
+    display: inline-block;
+    position: relative;
+    float: right;
+    right: 200px;
+    top: -65px;
+}

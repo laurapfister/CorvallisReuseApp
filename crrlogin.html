@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Corvallis Reuse and Reapir Directory Admin-Site</title>
+    <title>Corvallis Reuse and Repair Directory Admin-Site</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="corvallis.css">
+    <link rel="stylesheet" type="text/css" href="crrlogin.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   </head>
   <body>
+    <div id="body_wrapper">
+    <h3> Corvallis Reuse and Repair Directory - Administrative Site </h3>
     <section>
       <form action="login.php" method="post">
 	<label>Administrator <input id="user" name="user" type="text"></label>
 	<label>Password <input id="password" name="password" type="password"></label>
-	<input type="button" id="login" value="Login">
+	<input class="button" type="button" id="login" value="Login">
       </form>
-
+    </div>
     </section>
     <script src="login.js"></script>
   </body>

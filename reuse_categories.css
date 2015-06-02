@@ -150,7 +150,7 @@ input{
     font-size:28px;
     display:inline-block;
     padding-top:30px;
-    padding-left:110px;
+    padding-left:65px;
     color:#D67814;
     text-shadow:0px 0.1px 0px rgba(255,255,255, .3), 0px -0.1px 0px rgba(0,0,0,.7);
     position:relative;
@@ -160,4 +160,12 @@ input{
     position:relative;
     display:inline-block;
     width: 500px;
+}
+
+#logout{
+    display: inline-block;
+    position: relative;
+    float: right;
+    right: 200px;
+    top: -65px;
 }

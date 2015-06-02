@@ -4,21 +4,18 @@
 	
 ?>
 
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Reuse Items Directory Edit</title>
+    <title>Repair Items Directory Edit</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="reuse_items.css">
+    <link rel="stylesheet" type="text/css" href="rep_items.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   </head>
   <body>
-    <!--- Header for the website here. Include Link to home page and to other
-	  pages--->
     <div id="header">
       <div id="logo"></div>
-      <div id="heading">Reuse Categories Directory</div>
+      <div id="heading">Repair Items Directory</div>
       <div class="menu-wrap">
 	<nav class="menu">
 	  <ul class="menu-list">
@@ -39,22 +36,23 @@
 	      </ul>
 	    </li>
 	  </ul>
+	  <input type="button" class="button" id="logout" value="Logout">
 	</nav>
+
       </div>
     </div>
+
     <!--- New Item input here --->
-    <section>
-      <h3>Create New Item</h3>
-      <form>
-	<label>Item Name<input id="iname" type="text"></label>
-	<br>
-	<div class="cat-box">
-	  <label>Category<div id="add_cats"></div></label>
-	</div>
-	<br>
-	<input type="button" class="button" id="add_item" value = "Add Item">
-      </form>
-    </section>
+    <div id="Items">
+    <div>
+      <section>
+	<h3>Create New Item</h3>
+	<form>
+	  <label>Item Name<input id="iname" type="text"></label>
+	  <input class="button" type="button" id="add_item" value = "Add Item">
+	</form>
+      </section>
+    </div>
     <!--- Edit Existing item here --->
     <section>
       <h3> Edit or Delete Existing Item </h3>
@@ -63,11 +61,6 @@
 	 <br>
 	 <input type="hidden" id="hidden_select">
 	 <label>Item Name<input id="item_name_edit" type="text"></label>
-	 <br>
-	 <div class="cat-box">
-	 <label>Category<div id="existing_cats"></div></label>
-	 </div>
-	 <br>
 	 <input id="edit_item" class="button" type="button" value = "Save Edit">
 	 <input id="delete_item" class="button" type="button" value = "Delete Item">
       </form>
@@ -76,10 +69,11 @@
     <!--- List of  Items here --->
     <section>
       <h3> Items </h3>
-        <div id="item_list"></div>
+      <div id="item_list"></div>
     </section>
+    </div>
 
-
-    <script src="reuse_items.js"></script>
+    <script src="rep_items.js"></script>
+    <script src="logout.js"></script>
   </body>
 </html>

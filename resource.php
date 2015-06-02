@@ -10,7 +10,7 @@
 		$server->getResponse()->send();
 		die;
 	}
-	echo json_encode(array('success' => true, 'message' => 'you accessed my apis!'));
+	echo json_encode(array('success' => 'true', 'message' => 'you accessed my apis!'));
 
 
 ?>

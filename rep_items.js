@@ -12,7 +12,6 @@ $(document).ready(function(){
 		    var items = "<select name='select_item' id='select_item'><option>-------------</option>";
 		    var list = "";
 		    for(var i = 0; i < data.length; i++){
-			console.log(data[i].itemName);
 			items += "<option value = " + data[i].itemId + ">";
 			items += data[i].itemName;
 			items += "</option>";
@@ -68,7 +67,7 @@ $(document).ready(function(){
     });
 
     $("#delete_item").click(function(){
-	var item_name = document.getElementById("item_name_edit").value = selected.text();
+	var item_name = document.getElementById("item_name_edit").value;
 	var cur_item = document.getElementById("hidden_select").value;
 	var cont = confirm("Are you sure you want to delete "+item_name+"?");
 	if(cont){

@@ -12,7 +12,7 @@ $(document).ready(function(){
 		    var cats = "<select name='select_cat' id='select_cat'><option>-------------</option>";
 		    var list = "";
 		    for(var i = 0; i < data.length; i++){
-			console.log(data[i].categoryName);
+		
 			cats += "<option value = " + data[i].categoryId + ">";
 			cats += data[i].categoryName;
 			cats += "</option>";

@@ -18,7 +18,7 @@
 	  pages--->
     <div id="header">
       <div id="logo"></div>
-      <div id="heading">Reuse Categories Directory</div>
+      <div id="heading">Reuse Items Directory</div>
       <div class="menu-wrap">
 	<nav class="menu">
 	  <ul class="menu-list">
@@ -39,6 +39,7 @@
 	      </ul>
 	    </li>
 	  </ul>
+	  <input type="button" class="button" id="logout" value="Logout">
 	</nav>
       </div>
     </div>
@@ -81,5 +82,6 @@
 
 
     <script src="reuse_items.js"></script>
+    <script src="logout.js"></script>
   </body>
 </html>

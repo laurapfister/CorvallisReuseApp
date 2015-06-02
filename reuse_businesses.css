@@ -154,7 +154,7 @@ input{
     font-size:28px;
     display:inline-block;
     padding-top:30px;
-    padding-left:45px;
+    padding-left:55px;
     color:#D67814;
     text-shadow:0px 0.1px 0px rgba(255,255,255, .3), 0px -0.1px 0px rgba(0,0,0,.7);
     position:relative;
@@ -244,4 +244,11 @@ input{
 .cat-group{
     position: relative;
     display: block;
+}
+#logout{
+    display: inline-block;
+    position: relative;
+    float: right;
+    right: 200px;
+    top: -65px;
 }

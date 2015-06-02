@@ -103,3 +103,19 @@ a:hover{
     border-top: 1px solid #0B6108;
     border-bottom:1px solid #0B6108;
 }
+
+.button{
+    background-color:#D67814;
+    color: #FFFFFF;
+    box-shadow: none;
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+}
+
+#logout{
+    float: right;
+    position: relative;
+    display: inline-block;
+    right: 330px;
+}

@@ -11,12 +11,40 @@
 	require_once('../php-opencage-geocode/src/OpenCage.Geocoder.php');
 	require '../oauth2-server-php/src/OAuth2/Autoloader.php';
 	OAuth2\Autoloader::register();
-
 	
 	
-	$app = new \Slim\Slim(array('debug' => true));
+		
+	
+	$app = new \Slim\Slim();
 	$app->response->headers->set('Content-Type', 'application/json');
 	
+	$check_token = function(\Slim\Route $route) use($app){
+				session_start();
+				if(!isset($_SESSION['token'])){
+					$app->response->setStatus(401);
+					echo "User Authentication required";
+					exit(1);
+				}
+				$access_token = $_SESSION['token'];
+		
+				$curl = curl_init();
+				curl_setopt_array($curl, array(
+				CURLOPT_URL => 'http://web.engr.oregonstate.edu/~pfisterl/cs419/resource.php',
+				CURLOPT_POST => 1,
+				CURLOPT_POSTFIELDS => array("access_token={$access_token}"),	
+				CURLOPT_RETURNTRANSFER => 1
+				));
+
+				$resp = curl_exec($curl);
+				$resp = json_decode($resp);
+		
+				if(isset($resp->{'error'})){
+					$app->response->setStatus(401);
+					echo "User Authentication required";
+					exit(1);
+				}
+			};
+
 
 
 	/*Returns an array of businesses in JSON format with the following information:
@@ -124,7 +152,7 @@
 	/*Add a new item to the repairItems database. Requires the following data in JSON format:
                itemName - name of items
 	*/	
-	$app->post('/repairItem', function() use ($app){
+	$app->post('/repairItem', $check_token, function() use ($app){
 		
 		$request = $app->request();
 		$body = $request->getBody();
