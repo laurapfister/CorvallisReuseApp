@@ -1,0 +1,1 @@
+INSERT INTO repair_businesses(repairName, repairPhone, repairWeb, repairAddress, repairCity, repairState, repairZip, repairAddInfo) VALUES("Furniture Restoration Center", "5419296681", "http://restorationsupplies.com", "1321 Main St.", "Philomath", "OR", "Restores all types of furniture and has hardware for doing it yourself");
