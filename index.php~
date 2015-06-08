@@ -828,11 +828,6 @@
 		if(isset($params->businessName)){
 			$new_name = $mysqli->real_escape_string((string)$params->businessName);
 		}
-		else{
-			$app->response->setStatus(400);
-			exit(1);
-		}
-			
 		if(isset($params->Address)){
 			$address = $mysqli->real_escape_string((string)$params->Address);
 		}

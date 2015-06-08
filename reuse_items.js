@@ -101,7 +101,7 @@ $(document).ready(function(){
 				     'category': cat})
 	       }).always(function(){
 		   load_items();
-		   $("iname").val("");
+		   $("#iname").val("");
 		   });
     });
 

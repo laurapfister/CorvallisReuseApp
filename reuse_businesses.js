@@ -43,13 +43,15 @@ $(document).ready(function(){
     /*Ajax call to remove association between category and business*/
     var delete_assoc = function(id, category){
 	$.ajax({type:"DELETE",
-		url: base_url + "/reuse/"+category+"/"+id});
+		url: base_url + "/reuse/"+category+"/"+id,
+	      async: false});
 	}
     
     /*Ajax call to create association between category and business*/
     var create_assoc = function(id, category){
 	$.ajax({type:"PUT",
-		url: base_url + "/reuse/"+category+"/"+id});
+		url: base_url + "/reuse/"+category+"/"+id,
+	       async: false});
 	}
 
 
@@ -189,16 +191,16 @@ $(document).ready(function(){
 				     'phone': phone,
 				     'web': web,
 				     'hours': hours})
+	
 		}).always(function(data){
 		    var busi_id = data;
 		    $('.add-cat').each(function(){
 			var cat = $('option:selected', this).val();
 			$.ajax({type: "PUT",
 				url : base_url + "/reuse/"+cat+"/" + busi_id
-			       }).done(function(){
-				   load_business();
-			       });
+			       })
 		    });
+		    location.reload();
 				      
 		});
 	});
@@ -212,8 +214,8 @@ $(document).ready(function(){
 	    $.ajax({type:"DELETE",
 		    url: base_url + "/reuse/" + busi_id,
 		    dataType: 'json'
-		   }).done(function(){
-		       load_business();
+		   }).always(function(){
+		         location.reload();
 		   });
 	}
     });
@@ -250,7 +252,7 @@ $(document).ready(function(){
 		       //REMOVE console.log PUT all categories
 		       create_assoc(busi_id, val);
 		   });
-		   load_business();
+		   location.reload();
 		
 	       });
     });

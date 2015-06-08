@@ -5,6 +5,7 @@ $(document).ready(function(){
 
     var item_edits = [];
     var all_items = "";
+    var items_new_busi = "";
 
     /*Ajax call to get all items from database*/
     var get_all_items = $.ajax({type:"GET",
@@ -23,6 +24,7 @@ $(document).ready(function(){
 	    }
 	    items += "</select>";
 	    $("#add_items").append(items);
+	    items_new_busi = items;
 	});
     }
 	
@@ -44,14 +46,15 @@ $(document).ready(function(){
     /*Deletes the association between an item and business*/
     var delete_assoc = function(id, item){
 	$.ajax({type:"DELETE",
-		url: base_url + "/repair/"+id+"/"+item});
-	console.log(id);
+		url: base_url + "/repair/"+id+"/"+item,
+	      async: false})
 	}
 
     /*Creates association between item and business*/
     var create_assoc = function(id, item){
 	$.ajax({type:"PUT",
-		url: base_url + "/repair/"+id+"/"+item});
+		url: base_url + "/repair/"+id+"/"+item,
+	       async: false});
 	}
 
 
@@ -92,6 +95,7 @@ $(document).ready(function(){
     var select_change = function(){ 
 	$("#select_item").bind('change', function(){
 	    var selected = $("option:selected", this);
+	    $('#existing_items').html("");
 	    $.ajax({type:"GET",
 		    dataType: 'json',
 		    url: base_url+"/repair/"+selected.val(),
@@ -136,7 +140,7 @@ $(document).ready(function(){
 	    busis += "</select>";
 	    $("#cur_busis").html(busis);
 	    $("#busi_list").html(blist);
-	    $("#ebname").val("");
+	    /*$("#ebname").val("");
 	    $("#eaddress").val("");
 	    $("#ecity").val("");
 	    $("#estate").val("");
@@ -145,7 +149,7 @@ $(document).ready(function(){
 	    $("#ewebsite").val("");
 	    $("#ehours").val("");
 	    $("#eaddInfo").val("");
-	    $("#hidden_busi").val("");
+	    $("#hidden_busi").val("");*/
 	    select_change();
 	});
     }					       
@@ -169,15 +173,15 @@ $(document).ready(function(){
 
     /*Adds new business to database*/
     $("#add_busi").click(function(){
-	var name = document.getElementById("bname").value;
-	var address = document.getElementById("address").value;
-	var city = document.getElementById("city").value;
-	var state = document.getElementById("state").value;
-	var zip = document.getElementById("zip").value;
-	var phone = document.getElementById("phone").value;
-	var web = document.getElementById("website").value;
-	var hours = document.getElementById("hours").value;
-	var addInfo = document.getElementById("addInfo").value;
+	var name = $("#bname").val();
+	var address = $("#address").val();
+	var city = $("#city").val();
+	var state = $("#state").val();
+	var zip = $("#zip").val();
+	var phone = $("#phone").val();
+	var web = $("#website").val();
+	var hours = $("#hours").val();
+	var addInfo = $("#addInfo").val();
 
 	$.ajax({type:"POST",
 		url: base_url+"/repair",
@@ -199,8 +203,8 @@ $(document).ready(function(){
 				url : base_url + "/repair/"+busi_id+"/" + item
 			       });
 			});
-		    load_business();
-		    });
+		      location.reload();
+		});
 	});
 
     /*Deletes selected business from database, only after user confirmation*/
@@ -213,7 +217,7 @@ $(document).ready(function(){
 		    url: base_url + "/repair/" + busi_id,
 		    dataType: 'json'
 		   }).always(function(){
-		       load_business();
+		       location.reload();
 		   });
 	}
     });
@@ -243,7 +247,6 @@ $(document).ready(function(){
 				     'hours': hours,
 				     'addInfo': addInfo})
 	       }).always(function(){
-		   load_business();
 		   //DELETE existing items use array item_edits
 		   $.each(item_edits, function(i , val){
 		       delete_assoc(busi_id, val);
@@ -254,6 +257,7 @@ $(document).ready(function(){
 		       //REMOVE console.log PUT all items
 		       create_assoc(busi_id, val);
 		   });
+		   location.reload();
 	       });
     });
 
